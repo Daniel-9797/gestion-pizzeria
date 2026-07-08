@@ -1,0 +1,32 @@
+# ─── Secretos y configuración local (NUNCA subir) ───
+.env
+.env.*
+!.env.example
+*.key
+clave.key
+
+# ─── Entorno virtual y Python ───
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# ─── Datos, backups y ficheros generados ───
+*.fdb
+*.enc
+*.log
+*.zip
+*.xlsx
+*.xlsm
+*.ods
+Arqueos*/
+Codigo_archivos/
+
+# ─── Sistema operativo / editores ───
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
