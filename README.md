@@ -10,7 +10,7 @@ Está hecha en Python con Tkinter (interfaz) y PostgreSQL (datos).
 ## Qué hace
 
 - **Cierre del día**: registro de la venta, desglose por formas de pago y método
-  de cobro, dinero al banco y Z de caja.
+  de cobro y dinero al banco.
 - **Arqueo**: conteo de billetes y monedas. La apertura de cada día se hereda del
   cierre del anterior, y compara el efectivo contado con lo que debería haber.
 - **Previsión**: estima la venta de cada día a partir del histórico, dándole más
