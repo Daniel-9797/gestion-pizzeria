@@ -1,45 +1,70 @@
-# Gestión de pizzería — TPV, previsión y control de food cost
+# Gestión de caja de una pizzería
 
-Aplicación de escritorio (Python + Tkinter) para la gestión diaria de una
-pizzería: cierre de caja, arqueo, previsión de ventas, control de food cost e
-inventario, y avisos de eventos (partidos de fútbol) que afectan a la demanda.
+App de escritorio que uso para el día a día de una pizzería: cerrar la caja,
+cuadrar el arqueo, llevar el histórico de ventas y hacerme una idea de lo que se
+va a vender cada día. La hice a medida porque las hojas de Excel que usaba se me
+quedaban cortas.
 
-## Características
+Está hecha en Python con Tkinter (interfaz) y PostgreSQL (datos).
 
-- **Cierre de caja diario** con arqueo de efectivo (conteo de billetes y monedas,
-  apertura heredada del cierre anterior).
-- **Previsión de ventas** por media ponderada del histórico y tipo de día.
-- **Control de food cost** teórico (sobre venta prevista) y real (sobre venta real),
-  presupuesto de compra y seguimiento semanal.
-- **Análisis de costes por producto**: evolución de precios, inflación y gasto.
-- **Eventos de fútbol**: descarga partidos relevantes (LaLiga, Champions, Mundial,
-  Eurocopa) que pueden alterar la demanda, vía la API de football-data.org.
-- **Sincronización opcional** con una base en la nube (Neon/PostgreSQL).
-- **Correo diario** con el resumen del cierre (opcional, vía Gmail SMTP).
+## Qué hace
 
-## Requisitos
+- **Cierre del día**: registro de la venta, desglose por formas de pago y método
+  de cobro, dinero al banco y Z de caja.
+- **Arqueo**: conteo de billetes y monedas. La apertura de cada día se hereda del
+  cierre del anterior, y compara el efectivo contado con lo que debería haber.
+- **Previsión**: estima la venta de cada día a partir del histórico, dándole más
+  peso al año pasado y ajustando según el tipo de día (laborable, findes, etc.).
+- **Seguimiento**: compara la venta prevista con la real a lo largo del mes.
+- **Histórico y ranking**: consulta de ventas por día, mes y comparativa entre meses.
+- **Gráficos y KPIs**: evolución de ventas y algunos indicadores del negocio.
+- **Calendario semanal**: vista de la semana con la previsión de cada día.
+- **Eventos**: descarga los partidos de fútbol importantes (LaLiga, Champions,
+  Mundial, Eurocopa) desde football-data.org, porque un partido gordo entre semana
+  cambia bastante la venta de una noche.
 
-- Python 3.10+
-- PostgreSQL (base local)
-- Dependencias: ver `requirements.txt`
+Opcionalmente sincroniza los cierres con una base en la nube (para consultarlos
+desde otro sitio) y manda un correo con el resumen del día.
 
-## Instalación
+## Capturas
+
+**Previsión** — estimación de venta por día según el histórico.
+![Previsión](Capturas/prevision.png)
+
+**Seguimiento** — previsto contra real a lo largo del mes.
+![Seguimiento](Capturas/seguimiento.png)
+
+**Gráficos**
+![Gráficos](Capturas/graficos.png)
+
+**KPIs**
+![KPIs](Capturas/kpi.png)
+
+**Calendario semanal**
+![Calendario semanal](Capturas/calendario-semanal.png)
+
+**Eventos** — partidos que pueden mover la venta de la noche.
+![Eventos](Capturas/eventos.png)
+
+## Cómo ponerla en marcha
+
+Necesita Python 3.10+ y un PostgreSQL. Las dependencias están en `requirements.txt`.
 
 ```bash
 python -m venv venv
-venv\Scripts\activate        # Windows
+venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env         # y rellena tus valores
+copy .env.example .env
 python app.py
 ```
 
-## Configuración
+La configuración (base de datos, contraseñas, token de fútbol, correo) va en un
+archivo `.env` que no se sube al repo. Tienes una plantilla en `.env.example` para
+saber qué hay que rellenar.
 
-Toda la configuración sensible (contraseñas, tokens, datos de conexión) se lee de
-variables de entorno definidas en un archivo `.env` local. Copia `.env.example`
-como `.env` y rellena tus valores. **El `.env` real nunca se sube al repositorio.**
+## Aviso
 
-## Nota
-
-Proyecto de uso interno. Los datos, credenciales y configuración de conexión no se
-incluyen en el repositorio. Este código se comparte con fines demostrativos.
+Es una herramienta interna que fui montando para mi propio uso, así que da por
+hecho mi manera de trabajar y mi base de datos. La subo para enseñar el código.
+Sin una base PostgreSQL propia arranca pero sale sin datos. Ni las credenciales ni
+los datos del negocio están en el repositorio.
