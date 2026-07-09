@@ -1,5 +1,5 @@
 """
-🍕 Pizzería - Sistema de Cierre de Caja Diario
+Daily Close & Forecast - restaurant cash-up and sales forecasting
 Conecta con PostgreSQL para guardar la facturación diaria.
 """
 
@@ -26,32 +26,20 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from tkinter import filedialog, simpledialog
 import platform
 
-# ─────────────────────────────────────────────
-#  AJUSTES ESPECÍFICOS DE PLATAFORMA (Windows / Mac / Linux)
-#  Mismo app.py para todos los sistemas — se adapta solo, no hace falta
-#  mantener una versión distinta por máquina.
-#
-#  Sin esto, en Windows pasan dos cosas que hacen que la app "se vea vieja":
-#  1) Falta avisar a Windows de que la app sabe de pantallas de alta densidad
-#     (DPI). Si no se avisa, Windows la escala como si fuera una imagen
-#     (bitmap stretching) y el texto sale borroso/pixelado.
-#  2) Las fuentes "Avenir Next" y "Menlo" son exclusivas de macOS. En Windows
-#     no existen, así que Tk cae a una fuente de repuesto genérica que no
-#     pega con el diseño (tamaños, interlineado y grosor distintos).
-# ─────────────────────────────────────────────
-_SO = platform.system()   # "Windows", "Darwin" (Mac) o "Linux"
+# fuentes y DPI por sistema
+_SO = platform.system()
 
 if _SO == "Windows":
     try:
         import ctypes
-        ctypes.windll.shcore.SetProcessDpiAwareness(1)   # Windows 8.1+
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
     except Exception:
         try:
-            ctypes.windll.user32.SetProcessDPIAware()    # Windows Vista/7 (fallback)
+            ctypes.windll.user32.SetProcessDPIAware()
         except Exception:
             pass
-    FONT_SANS = "Segoe UI"        # fuente nativa de Windows 10/11
-    FONT_MONO = "Consolas"        # monoespaciada nativa de Windows
+    FONT_SANS = "Segoe UI"
+    FONT_MONO = "Consolas"
 elif _SO == "Darwin":
     FONT_SANS = "Avenir Next"
     FONT_MONO = "Menlo"
@@ -127,12 +115,12 @@ C = {
     "bg":        "#15141A",   # fondo principal — gris-azulado casi negro, más moderno que el marrón
     "panel":     "#1F1E26",   # paneles secundarios
     "card":      "#262530",   # tarjetas — gris-azulado oscuro neutro
-    "accent":    "#FF7F32",   # Pantone 158 — naranja Carpi Pizza
-    "accent2":   "#FFC72C",   # Pantone 123 — amarillo Carpi Pizza
+    "accent":    "#FF7F32",   # naranja
+    "accent2":   "#FFC72C",   # amarillo
     "text":      "#F5F4F8",   # texto principal — casi blanco, frío
     "muted":     "#9A98A6",   # texto secundario — gris-violeta
     "success":   "#22C55E",   # verde positivo
-    "danger":    "#D52B1E",   # Pantone 1795 — rojo Carpi Pizza, también usado para negativo/alerta
+    "danger":    "#D52B1E",   # rojo (negativo/alerta)
     "border":    "#34323E",   # bordes sutiles
     "entry_bg":  "#15141A",   # fondo inputs
     "entry_fg":  "#F5F4F8",
@@ -597,7 +585,7 @@ def enviar_correo_cierre(fecha: date) -> tuple:
         msg = EmailMessage()
         msg["From"] = EMAIL_USER
         msg["To"] = EMAIL_DESTINO_CIERRE
-        msg["Subject"] = f"Cierre Carpi {f_txt} · {es(venta)} €"
+        msg["Subject"] = f"Cierre {f_txt} · {es(venta)} €"
         msg.set_content(cuerpo)
 
         context = ssl.create_default_context()
@@ -2202,10 +2190,10 @@ class PizzeriaApp(tk.Tk):
         except Exception:
             pass
 
-        self.title("🍕 CarPizzzeta — Cierre de Caja")
+        self.title("Daily Close")
         self.modo_acceso = self._pedir_login()   # 'master' o 'empleado'
         if self.modo_acceso == "empleado":
-            self.title("🍕 CarPizzzeta — Cierre de Caja  [Acceso empleado]")
+            self.title("Daily Close — [staff access]")
 
         self.deiconify()  # ya autenticado: mostramos la ventana
         self.configure(bg=C["bg"])
@@ -2255,7 +2243,7 @@ class PizzeriaApp(tk.Tk):
         max_intentos = 3
         while intentos < max_intentos:
             pwd = simpledialog.askstring(
-                "🍕 CarPizzzeta — Acceso",
+                "Daily Close — Access",
                 "Introduce la contraseña:",
                 show="*", parent=self
             )
@@ -2456,9 +2444,9 @@ class PizzeriaApp(tk.Tk):
         hdr = tk.Frame(self, bg=C["card"], pady=14)
         hdr.pack(fill="x")
 
-        tk.Label(hdr, text="🍕", font=("Helvetica", 28),
+        tk.Label(hdr, text="●", font=("Helvetica", 28),
                  bg=C["card"], fg=C["accent"]).pack(side="left", padx=(20,8))
-        tk.Label(hdr, text="CarPizzzeta", font=(FONT_SANS, 20, "bold"),
+        tk.Label(hdr, text="Daily Close", font=(FONT_SANS, 20, "bold"),
                  bg=C["card"], fg=C["text"]).pack(side="left")
         tk.Label(hdr, text="cierre de caja diario", font=(FONT_SANS, 10),
                  bg=C["card"], fg=C["muted"]).pack(side="left", padx=(8,0), pady=(6,0))
