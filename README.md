@@ -1,54 +1,89 @@
-# Gestión de caja de una pizzería
+# Daily Close & Forecast
 
-App de escritorio que uso para el día a día de una pizzería: cerrar la caja,
-cuadrar el arqueo, llevar el histórico de ventas y hacerme una idea de lo que se
-va a vender cada día. La hice a medida porque las hojas de Excel que usaba se me
-quedaban cortas.
+A desktop app I built to run the daily numbers of a restaurant: closing the till,
+reconciling the cash count, keeping the sales history and forecasting how much each
+day is likely to sell. I started it because the spreadsheets I was using kept falling
+short — I wanted the day's close, the forecast and the follow-up all in one place,
+pulling from a single database.
 
-Está hecha en Python con Tkinter (interfaz) y PostgreSQL (datos).
+It's written in **Python (Tkinter)** for the interface and **PostgreSQL** for the data.
 
-## Qué hace
+---
 
-- **Cierre del día**: registro de la venta, desglose por formas de pago y método
-  de cobro, dinero al banco y Z de caja.
-- **Arqueo**: conteo de billetes y monedas. La apertura de cada día se hereda del
-  cierre del anterior, y compara el efectivo contado con lo que debería haber.
-- **Previsión**: estima la venta de cada día a partir del histórico, dándole más
-  peso al año pasado y ajustando según el tipo de día (laborable, findes, etc.).
-- **Seguimiento**: compara la venta prevista con la real a lo largo del mes.
-- **Histórico y ranking**: consulta de ventas por día, mes y comparativa entre meses.
-- **Gráficos y KPIs**: evolución de ventas y algunos indicadores del negocio.
-- **Calendario semanal**: vista de la semana con la previsión de cada día.
-- **Eventos**: descarga los partidos de fútbol importantes (LaLiga, Champions,
-  Mundial, Eurocopa) desde football-data.org, porque un partido gordo entre semana
-  cambia bastante la venta de una noche.
+## What it does
 
-Opcionalmente sincroniza los cierres con una base en la nube (para consultarlos
-desde otro sitio) y manda un correo con el resumen del día.
+**Daily close** — records the day's sales broken down by payment type (cash, card,
+delivery platforms, etc.) and how much cash goes to the bank.
 
-## Capturas
+**Cash reconciliation** — counts notes and coins, with each day's opening balance
+inherited from the previous close, and compares the cash actually counted against
+what the day's takings say should be there. It flags any mismatch so you catch a
+miscount the same day.
 
-**Previsión** — estimación de venta por día según el histórico.
-![Previsión](Capturas/prevision.png)
+**Forecast** — estimates each day's sales from history, giving more weight to the
+same period last year and adjusting by day type (weekday, weekend, holiday, eve of a
+holiday). The forecast is corrected by a rolling factor so it stays close to how the
+business is actually trending.
 
-**Seguimiento** — previsto contra real a lo largo del mes.
-![Seguimiento](Capturas/seguimiento.png)
+**Tracking** — compares forecast vs. actual sales across the month, so you can see
+early whether you're above or below plan.
 
-**Gráficos**
-![Gráficos](Capturas/graficos.png)
+**History & ranking** — sales by day and by month, with month-to-month comparisons
+and rankings.
+
+**Charts & KPIs** — sales evolution and a handful of business indicators.
+
+**Weekly calendar** — a week view with the forecast for each day.
+
+**Events** — pulls key football fixtures (LaLiga, Champions League, World Cup, Euros)
+from the [football-data.org](https://www.football-data.org/) API, because a big
+midweek match noticeably changes an evening's sales in a delivery/takeaway business.
+
+Optionally it can sync the closes to a cloud database (to check them from elsewhere)
+and email a daily summary.
+
+---
+
+## Screenshots
+
+**Forecast** — per-day sales estimate from history.
+![Forecast](Capturas/prevision.png)
+
+**Tracking** — forecast vs. actual across the month.
+![Tracking](Capturas/seguimiento.png)
+
+**Charts**
+![Charts](Capturas/graficos.png)
 
 **KPIs**
 ![KPIs](Capturas/kpi.png)
 
-**Calendario semanal**
-![Calendario semanal](Capturas/calendario-semanal.png)
+**Weekly calendar**
+![Weekly calendar](Capturas/calendario-semanal.png)
 
-**Eventos** — partidos que pueden mover la venta de la noche.
-![Eventos](Capturas/eventos.png)
+**Events** — fixtures that can move an evening's sales.
+![Events](Capturas/eventos.png)
 
-## Cómo ponerla en marcha
+---
 
-Necesita Python 3.10+ y un PostgreSQL. Las dependencias están en `requirements.txt`.
+## Tech notes
+
+- **Language:** Python 3.10+
+- **UI:** Tkinter (native desktop app)
+- **Database:** PostgreSQL
+- **Charts:** Matplotlib
+- **External data:** football-data.org API (fixtures), requests + BeautifulSoup
+- **Extras:** optional cloud sync and daily email summary (SMTP)
+
+The forecasting logic is the interesting part: rather than a flat average, it weights
+last year's same period more heavily, classifies each day by type, and applies a
+rolling correction factor computed from recent forecast-vs-actual accuracy.
+
+---
+
+## Running it
+
+Needs Python 3.10+ and a PostgreSQL database. Dependencies are in `requirements.txt`.
 
 ```bash
 python -m venv venv
@@ -58,13 +93,14 @@ copy .env.example .env
 python app.py
 ```
 
-La configuración (base de datos, contraseñas, token de fútbol, correo) va en un
-archivo `.env` que no se sube al repo. Tienes una plantilla en `.env.example` para
-saber qué hay que rellenar.
+Configuration (database, passwords, football API token, email) lives in a `.env`
+file that is not committed. There's an `.env.example` template showing what to fill in.
 
-## Aviso
+---
 
-Es una herramienta interna que fui montando para mi propio uso, así que da por
-hecho mi manera de trabajar y mi base de datos. La subo para enseñar el código.
-Sin una base PostgreSQL propia arranca pero sale sin datos. Ni las credenciales ni
-los datos del negocio están en el repositorio.
+## A note on this repo
+
+This is an internal tool I built for my own use, so it assumes my way of working and
+my own database schema. I'm publishing it to show the code and the approach, not as a
+plug-and-play product. Without your own PostgreSQL database it will start but come up
+empty. No credentials and no business data are included in the repository.
